@@ -993,26 +993,50 @@
         },
         {
           "atomType": "Code",
-          "x": 0.8756510416666666,
-          "y": 0.32285714285714284,
+          "x": 0.7643229166666667,
+          "y": 0.2885714285714286,
           "uniqueID": "id-76348",
           "ioValues": [
             {
-              "name": "thickness",
-              "ioValue": 5
-            },
-            {
-              "name": "faces",
+              "name": "assembly",
               "ioValue": "__GEOMETRY_INPUT__"
-            },
-            {
-              "name": "fuse",
-              "ioValue": false
             }
           ],
           "interpreterVersion": 1,
-          "code": "function run(faces: Assembly, thickness: number = 1, fuse: boolean = false) {\n  const resultingLeafs: Assembly[] = []\n  let fusedSolid: replicad.Solid;\n  faces.onLeafs((leaf) => {\n    let faces: replicad.Face[] = []\n    if (leaf.geometry instanceof replicad.Drawing) {\n      const sketches = leaf.geometry.sketchOnPlane(leaf.plane)\n      if (sketches instanceof replicad.Sketches) {\n        const t = sketches.faces()\n        faces = t instanceof replicad.Face ? [t] : t.faces\n      } else {\n        faces = [sketches.face()]\n      }\n    } else {\n      faces = leaf.geometry.faces\n    }\n    for (const face of faces) {\n      const offset = replicad.makeOffset(face, thickness);\n      const w1 = replicad.assembleWire(face.edges);\n      const w2 = replicad.assembleWire(offset.edges);\n      const boundary = replicad.loft([w2, w1], {}, true);\n      const solid = replicad.makeSolid([replicad.weldShellsAndFaces([face, offset, boundary])]).simplify();\n\n      if (fuse) {\n        if (fusedSolid == undefined) {\n          fusedSolid = solid\n        } else {\n          fusedSolid = fusedSolid.fuse(solid)\n        }\n      } else {\n        resultingLeafs.push(new Assembly({\n          ...leaf,\n          geometry: solid\n        }))\n      }\n    }\n    return leaf;\n  })\n  if (fuse) {\n    return new Assembly({\n      ...faces,\n      geometry: fusedSolid\n    })\n  } else {\n    return resultingLeafs;\n  }\n}",
-          "compiledCode": "\"use strict\";\nfunction run(faces, thickness = 1, fuse = false) {\n    const resultingLeafs = [];\n    let fusedSolid;\n    faces.onLeafs((leaf) => {\n        let faces = [];\n        if (leaf.geometry instanceof replicad.Drawing) {\n            const sketches = leaf.geometry.sketchOnPlane(leaf.plane);\n            if (sketches instanceof replicad.Sketches) {\n                const t = sketches.faces();\n                faces = t instanceof replicad.Face ? [t] : t.faces;\n            }\n            else {\n                faces = [sketches.face()];\n            }\n        }\n        else {\n            faces = leaf.geometry.faces;\n        }\n        for (const face of faces) {\n            const offset = replicad.makeOffset(face, thickness);\n            const w1 = replicad.assembleWire(face.edges);\n            const w2 = replicad.assembleWire(offset.edges);\n            const boundary = replicad.loft([w2, w1], {}, true);\n            const solid = replicad.makeSolid([replicad.weldShellsAndFaces([face, offset, boundary])]).simplify();\n            if (fuse) {\n                if (fusedSolid == undefined) {\n                    fusedSolid = solid;\n                }\n                else {\n                    fusedSolid = fusedSolid.fuse(solid);\n                }\n            }\n            else {\n                resultingLeafs.push(new Assembly({\n                    ...leaf,\n                    geometry: solid\n                }));\n            }\n        }\n        return leaf;\n    });\n    if (fuse) {\n        return new Assembly({\n            ...faces,\n            geometry: fusedSolid\n        });\n    }\n    else {\n        return resultingLeafs;\n    }\n}\n"
+          "code": "\n\n\nfunction run(assembly: Assembly) {\n  let faces: replicad.Face[] = []\n  assembly.onLeafs((leaf) => {\n    if (leaf.geometry instanceof replicad.Drawing) {\n      const sketches = leaf.geometry.sketchOnPlane(leaf.plane)\n      if (sketches instanceof replicad.Sketches) {\n        const t = sketches.faces()\n        faces = t instanceof replicad.Face ? [t] : t.faces\n      } else {\n        faces = [sketches.face()]\n      }\n    } else if (assembly.geometry instanceof replicad.Face) {\n      faces.push(assembly.geometry)\n    } else {\n      faces.push(...leaf.geometry.faces)\n    }\n    return leaf;\n  })\n\n  if (faces.length != 2) {\n    throw new Error(\"this function only supported for exactly two faces for now.\")\n  }\n\n  const w1 = replicad.assembleWire(faces[0].edges)\n  const w2 = replicad.assembleWire(faces[1].edges);\n  const boundary = replicad.loft([w2, w1], {}, true);\n  const solid = replicad.makeSolid([replicad.weldShellsAndFaces([...faces, boundary])]).simplify();\n\n  return solid;\n}",
+          "compiledCode": "\"use strict\";\nfunction run(assembly) {\n    let faces = [];\n    assembly.onLeafs((leaf) => {\n        if (leaf.geometry instanceof replicad.Drawing) {\n            const sketches = leaf.geometry.sketchOnPlane(leaf.plane);\n            if (sketches instanceof replicad.Sketches) {\n                const t = sketches.faces();\n                faces = t instanceof replicad.Face ? [t] : t.faces;\n            }\n            else {\n                faces = [sketches.face()];\n            }\n        }\n        else if (assembly.geometry instanceof replicad.Face) {\n            faces.push(assembly.geometry);\n        }\n        else {\n            faces.push(...leaf.geometry.faces);\n        }\n        return leaf;\n    });\n    if (faces.length != 2) {\n        throw new Error(\"this function only supported for exactly two faces for now.\");\n    }\n    const w1 = replicad.assembleWire(faces[0].edges);\n    const w2 = replicad.assembleWire(faces[1].edges);\n    const boundary = replicad.loft([w2, w1], {}, true);\n    const solid = replicad.makeSolid([replicad.weldShellsAndFaces([...faces, boundary])]).simplify();\n    return solid;\n}\n"
+        },
+        {
+          "atomType": "Assembly",
+          "x": 0.6627604166666666,
+          "y": 0.2742857142857143,
+          "uniqueID": "id-76360",
+          "ioValues": [
+            {
+              "name": "Shape 1",
+              "ioValue": null
+            },
+            {
+              "name": "Shape 2",
+              "ioValue": null
+            }
+          ]
+        },
+        {
+          "atomType": "Difference",
+          "x": 0.8528645833333333,
+          "y": 0.7028571428571428,
+          "uniqueID": "id-76365",
+          "ioValues": [
+            {
+              "name": "retain",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "remove",
+              "ioValue": "__GEOMETRY_INPUT__"
+            }
+          ]
         }
       ],
       "allConnectors": [
@@ -1062,6 +1086,11 @@
           "ap2ID": "id-76343"
         },
         {
+          "ap2Name": "Shape 1",
+          "ap1ID": "id-76138",
+          "ap2ID": "id-76360"
+        },
+        {
           "ap2Name": "retain",
           "ap1ID": "id-76147",
           "ap2ID": "id-76281"
@@ -1087,9 +1116,24 @@
           "ap2ID": "id-76343"
         },
         {
+          "ap2Name": "Shape 2",
+          "ap1ID": "id-76285",
+          "ap2ID": "id-76360"
+        },
+        {
           "ap2Name": "Assembly",
           "ap1ID": "id-76309",
           "ap2ID": "id-76285"
+        },
+        {
+          "ap2Name": "remove",
+          "ap1ID": "id-76348",
+          "ap2ID": "id-76365"
+        },
+        {
+          "ap2Name": "assembly",
+          "ap1ID": "id-76360",
+          "ap2ID": "id-76348"
         }
       ],
       "fileTypeVersion": 1
