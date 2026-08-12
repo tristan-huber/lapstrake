@@ -29,6 +29,43 @@
       "repoOwner": "tristan-huber",
       "repoName": "lapstrake",
       "SVGwidth": 10
+    },
+    {
+      "atomType": "Molecule",
+      "x": 0.31315104166666663,
+      "y": 0.40571428571428575,
+      "uniqueID": "id-76114",
+      "name": "Molecule",
+      "ioValues": [
+        {
+          "name": "faces",
+          "ioValue": 10
+        }
+      ],
+      "topLevel": false,
+      "allAtoms": [
+        {
+          "atomType": "Output",
+          "x": 0.98,
+          "y": 0.5,
+          "uniqueID": "id-76116",
+          "ioValues": [
+            {
+              "name": "number or geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            }
+          ]
+        },
+        {
+          "atomType": "Input",
+          "x": 0.0231,
+          "y": 0.3342857142857143,
+          "uniqueID": "id-76118",
+          "name": "faces"
+        }
+      ],
+      "allConnectors": [],
+      "fileTypeVersion": 1
     }
   ],
   "allConnectors": [],
