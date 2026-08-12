@@ -317,6 +317,159 @@
           "unitsKey": "Unitless",
           "fileTypeVersion": 1,
           "lastReloadedFromGithubAt": 1786566151710
+        },
+        {
+          "atomType": "GitHubMolecule",
+          "x": 0.4544270833333333,
+          "y": 0.5314285714285714,
+          "uniqueID": "id-76185",
+          "name": "crv.FaceToSolid",
+          "ioValues": [
+            {
+              "name": "Faces",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "thickness",
+              "ioValue": -0.25,
+              "currentEquation": "-0.25"
+            },
+            {
+              "name": "andFuse",
+              "ioValue": false
+            }
+          ],
+          "topLevel": false,
+          "allAtoms": [
+            {
+              "atomType": "Output",
+              "x": 0.98,
+              "y": 0.5,
+              "uniqueID": "id-76180",
+              "ioValues": [
+                {
+                  "name": "number or geometry",
+                  "ioValue": "__GEOMETRY_INPUT__"
+                }
+              ]
+            },
+            {
+              "atomType": "Code",
+              "x": 0.42617187500000003,
+              "y": 0.4448051948051948,
+              "uniqueID": "id-76181",
+              "ioValues": [
+                {
+                  "name": "faces",
+                  "ioValue": "__GEOMETRY_INPUT__"
+                },
+                {
+                  "name": "thickness",
+                  "ioValue": -0.25
+                },
+                {
+                  "name": "fuse",
+                  "ioValue": false
+                }
+              ],
+              "interpreterVersion": 1,
+              "code": "function run(faces: Assembly, thickness: number = 1, fuse: boolean = false) {\n  const resultingLeafs: Assembly[] = []\n  let fusedSolid: replicad.Solid;\n  faces.onLeafs((leaf) => {\n    let faces: replicad.Face[] = []\n    if (leaf.geometry instanceof replicad.Drawing) {\n      const sketches = leaf.geometry.sketchOnPlane(leaf.plane)\n      if (sketches instanceof replicad.Sketches) {\n        const t = sketches.faces()\n        faces = t instanceof replicad.Face ? [t] : t.faces\n      } else {\n        faces = [sketches.face()]\n      }\n    } else {\n      faces = leaf.geometry.faces\n    }\n    for (const face of faces) {\n      const offset = replicad.makeOffset(face, thickness);\n      const w1 = replicad.assembleWire(face.edges);\n      const w2 = replicad.assembleWire(offset.edges);\n      const boundary = replicad.loft([w2, w1], {}, true);\n      const solid = replicad.makeSolid([replicad.weldShellsAndFaces([face, offset, boundary])]).simplify();\n\n      if (fuse) {\n        if (fusedSolid == undefined) {\n          fusedSolid = solid\n        } else {\n          fusedSolid = fusedSolid.fuse(solid)\n        }\n      } else {\n        resultingLeafs.push(new Assembly({\n          ...leaf,\n          geometry: solid\n        }))\n      }\n    }\n    return leaf;\n  })\n  if (fuse) {\n    return new Assembly({\n      ...faces,\n      geometry: fusedSolid\n    })\n  } else {\n    return resultingLeafs;\n  }\n}",
+              "compiledCode": "\"use strict\";\nfunction run(faces, thickness = 1, fuse = false) {\n    const resultingLeafs = [];\n    let fusedSolid;\n    faces.onLeafs((leaf) => {\n        let faces = [];\n        if (leaf.geometry instanceof replicad.Drawing) {\n            const sketches = leaf.geometry.sketchOnPlane(leaf.plane);\n            if (sketches instanceof replicad.Sketches) {\n                const t = sketches.faces();\n                faces = t instanceof replicad.Face ? [t] : t.faces;\n            }\n            else {\n                faces = [sketches.face()];\n            }\n        }\n        else {\n            faces = leaf.geometry.faces;\n        }\n        for (const face of faces) {\n            const offset = replicad.makeOffset(face, thickness);\n            const w1 = replicad.assembleWire(face.edges);\n            const w2 = replicad.assembleWire(offset.edges);\n            const boundary = replicad.loft([w2, w1], {}, true);\n            const solid = replicad.makeSolid([replicad.weldShellsAndFaces([face, offset, boundary])]).simplify();\n            if (fuse) {\n                if (fusedSolid == undefined) {\n                    fusedSolid = solid;\n                }\n                else {\n                    fusedSolid = fusedSolid.fuse(solid);\n                }\n            }\n            else {\n                resultingLeafs.push(new Assembly({\n                    ...leaf,\n                    geometry: solid\n                }));\n            }\n        }\n        return leaf;\n    });\n    if (fuse) {\n        return new Assembly({\n            ...faces,\n            geometry: fusedSolid\n        });\n    }\n    else {\n        return resultingLeafs;\n    }\n}\n"
+            },
+            {
+              "atomType": "Input",
+              "x": 0.0231,
+              "y": 0.14,
+              "uniqueID": "id-76182",
+              "name": "Faces",
+              "type": "geometry"
+            },
+            {
+              "atomType": "Input",
+              "x": 0.0231,
+              "y": 0.22400000000000003,
+              "uniqueID": "id-76183",
+              "name": "thickness"
+            },
+            {
+              "atomType": "Input",
+              "x": 0.0231,
+              "y": 0.30800000000000005,
+              "uniqueID": "id-76184",
+              "name": "andFuse",
+              "type": "boolean"
+            }
+          ],
+          "allConnectors": [
+            {
+              "ap2Name": "number or geometry",
+              "ap1ID": "id-76181",
+              "ap2ID": "id-76180"
+            },
+            {
+              "ap2Name": "faces",
+              "ap1ID": "id-76182",
+              "ap2ID": "id-76181"
+            },
+            {
+              "ap2Name": "thickness",
+              "ap1ID": "id-76183",
+              "ap2ID": "id-76181"
+            },
+            {
+              "ap2Name": "fuse",
+              "ap1ID": "id-76184",
+              "ap2ID": "id-76181"
+            }
+          ],
+          "parentRepo": {
+            "lastFoundGit": "2026-08-12T18:23:39.093Z",
+            "privateRepo": false,
+            "repoName": "crv.FaceToSolid",
+            "dateCreated": "2026-07-02T22:27:43Z",
+            "likes": 0,
+            "readMe": "https://raw.githubusercontent.com/tristan-huber/crv.FaceToSolid/master/README.md?sanitize=true",
+            "yyyy": 2026,
+            "topMoleculeID": "id-3850",
+            "githubMoleculesUsed": [],
+            "html_url": "https://github.com/tristan-huber/crv.FaceToSolid",
+            "topics": [
+              "abundance-tool"
+            ],
+            "pullRequests": [],
+            "parentRepo": null,
+            "forks": 0,
+            "dateModified": "739811",
+            "ranking": 0.3,
+            "searchField": "crv.facetosolid tristan-huber add thickness to a face or assembly of faces and return the resulting solid. does this by applying an offest to the face then stitching the sides. abundance-tool",
+            "owner": "tristan-huber",
+            "description": "Add thickness to a face or assembly of faces and return the resulting solid. Does this by applying an offest to the face then stitching the sides.",
+            "contentURL": "https://raw.githubusercontent.com/tristan-huber/crv.FaceToSolid/master/project.abundance?sanitize=true",
+            "svgURL": "https://raw.githubusercontent.com/tristan-huber/crv.FaceToSolid/master/project.svg?sanitize=true",
+            "isLocal": false
+          },
+          "unitsKey": "Unitless",
+          "fileTypeVersion": 1,
+          "lastReloadedFromGithubAt": 1786566395662
+        },
+        {
+          "atomType": "Code",
+          "x": 0.5338541666666666,
+          "y": 0.2914285714285714,
+          "uniqueID": "id-76200",
+          "ioValues": [
+            {
+              "name": "shape",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "offset",
+              "ioValue": 1
+            }
+          ],
+          "interpreterVersion": 1,
+          "code": "function run(shape: Assembly, offset: number = 1) {\n  return shape.onLeafs((leaf) => {\n    console.log(leaf)\n    if (leaf.geometry instanceof replicad.Drawing) {\n      throw new Error(\"Drawings not supported for this type of offset\")\n    }\n\n    if (leaf.geometry instanceof replicad.Face) {\n      leaf.geometry = replicad.makeOffset(leaf.geometry, offset)\n      return leaf;\n    }\n\n    const oc = replicad.getOC();\n    const progress = new oc.Message_ProgressRange_1();\n    const offsetBuilder = new oc.BRepOffsetAPI_MakeOffsetShape();\n    offsetBuilder.PerformByJoin(\n      leaf.geometry.wrapped,\n      offset,\n      0.000001,\n      oc.BRepOffset_Mode.BRepOffset_Skin,\n      true, // for interior offsets this seems to work better when set to true.\n      false,\n      oc.GeomAbs_JoinType.GeomAbs_Arc,\n      false,\n      progress\n    );\n\n    //      offsetBuilder.PerformBySimple(leaf.geometry.wrapped, offset)\n    leaf.geometry = replicad.cast(replicad.downcast(offsetBuilder.Shape()))\n    if (leaf.geometry instanceof replicad.Shell) {\n      console.log(\"got shell, trying to make solid\")\n      leaf.geometry = replicad.makeSolid([leaf.geometry])\n    }\n\n    offsetBuilder.delete();\n    progress.delete();\n\n    return leaf;\n    //leaf.geometry = replicad.makeOffset(leaf.geometry, offset);\n  })\n}",
+          "compiledCode": "\"use strict\";\nfunction run(shape, offset = 1) {\n    return shape.onLeafs((leaf) => {\n        console.log(leaf);\n        if (leaf.geometry instanceof replicad.Drawing) {\n            throw new Error(\"Drawings not supported for this type of offset\");\n        }\n        if (leaf.geometry instanceof replicad.Face) {\n            leaf.geometry = replicad.makeOffset(leaf.geometry, offset);\n            return leaf;\n        }\n        const oc = replicad.getOC();\n        const progress = new oc.Message_ProgressRange_1();\n        const offsetBuilder = new oc.BRepOffsetAPI_MakeOffsetShape();\n        offsetBuilder.PerformByJoin(leaf.geometry.wrapped, offset, 0.000001, oc.BRepOffset_Mode.BRepOffset_Skin, true, // for interior offsets this seems to work better when set to true.\n        false, oc.GeomAbs_JoinType.GeomAbs_Arc, false, progress);\n        //      offsetBuilder.PerformBySimple(leaf.geometry.wrapped, offset)\n        leaf.geometry = replicad.cast(replicad.downcast(offsetBuilder.Shape()));\n        if (leaf.geometry instanceof replicad.Shell) {\n            console.log(\"got shell, trying to make solid\");\n            leaf.geometry = replicad.makeSolid([leaf.geometry]);\n        }\n        offsetBuilder.delete();\n        progress.delete();\n        return leaf;\n        //leaf.geometry = replicad.makeOffset(leaf.geometry, offset);\n    });\n}\n"
         }
       ],
       "allConnectors": [
@@ -349,6 +502,16 @@
           "ap2Name": "geometry",
           "ap1ID": "id-76138",
           "ap2ID": "id-76147"
+        },
+        {
+          "ap2Name": "Faces",
+          "ap1ID": "id-76138",
+          "ap2ID": "id-76185"
+        },
+        {
+          "ap2Name": "shape",
+          "ap1ID": "id-76138",
+          "ap2ID": "id-76200"
         }
       ],
       "fileTypeVersion": 1
