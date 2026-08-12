@@ -38,8 +38,13 @@
       "name": "Molecule",
       "ioValues": [
         {
-          "name": "faces",
+          "name": "hull",
           "ioValue": "__GEOMETRY_INPUT__"
+        },
+        {
+          "name": "thickness",
+          "ioValue": -0.25,
+          "currentEquation": "-0.25"
         }
       ],
       "topLevel": false,
@@ -61,7 +66,7 @@
           "x": 0.0231,
           "y": 0.3342857142857143,
           "uniqueID": "id-76118",
-          "name": "faces",
+          "name": "hull",
           "type": "faceselect",
           "selectedFaceData": {
             "0": [
@@ -83,13 +88,267 @@
           "interpreterVersion": 1,
           "code": "\n\nfunction run(assembly: Assembly) {\n  const faces = assembly.getSelectedFaces();\n  const res = []\n  const oc = replicad.getOC();\n  return faces.map((face) => {\n    return oc.GeomLib.ExtendSurfByLength(face.surface, 5, 1, true)\n  })\n}",
           "compiledCode": "\"use strict\";\nfunction run(assembly) {\n    const faces = assembly.getSelectedFaces();\n    const res = [];\n    const oc = replicad.getOC();\n    return faces.map((face) => {\n        return oc.GeomLib.ExtendSurfByLength(face.surface, 5, 1, true);\n    });\n}\n"
+        },
+        {
+          "atomType": "Input",
+          "x": 0.0231,
+          "y": 0.6342857142857142,
+          "uniqueID": "id-76131",
+          "name": "thickness"
+        },
+        {
+          "atomType": "GitHubMolecule",
+          "x": 0.1171875,
+          "y": 0.33142857142857146,
+          "uniqueID": "id-76138",
+          "name": "ExtractFaces",
+          "ioValues": [
+            {
+              "name": "Assembly",
+              "ioValue": "__GEOMETRY_INPUT__"
+            }
+          ],
+          "topLevel": false,
+          "allAtoms": [
+            {
+              "atomType": "Output",
+              "x": 0.98,
+              "y": 0.5,
+              "uniqueID": "id-76135",
+              "ioValues": [
+                {
+                  "name": "number or geometry",
+                  "ioValue": "__GEOMETRY_INPUT__"
+                }
+              ]
+            },
+            {
+              "atomType": "Input",
+              "x": 0.0231,
+              "y": 0.14,
+              "uniqueID": "id-76136",
+              "name": "Assembly",
+              "type": "faceselect",
+              "selectedFaceData": {}
+            },
+            {
+              "atomType": "Code",
+              "x": 0.2565104166666667,
+              "y": 0.7599999999999999,
+              "uniqueID": "id-76137",
+              "ioValues": [
+                {
+                  "name": "input",
+                  "ioValue": "__GEOMETRY_INPUT__"
+                }
+              ],
+              "interpreterVersion": 1,
+              "code": "function run(input: Assembly) {\n  const res =  input.onLeafs((leaf) => {\n    if (leaf.geometry instanceof replicad.Drawing) {\n      throw new Error(\"Drawings have no Faces. Input must be 3d\")\n    }\n    if (leaf.selection?.faces && leaf.selection.faces.length > 0) {\n      const faces = leaf.geometry.faces;\n      const faceIndexes = leaf.selection.faces\n      if (faceIndexes.length == 1) {\n        leaf.geometry = faces[faceIndexes[0]]\n        return leaf;\n      } else {\n        const res = faceIndexes.map((index) => {\n          return new Assembly({ ...leaf, geometry: faces[index] })\n        })\n        return new Assembly({\n          geometry: res\n        })\n      }\n    }\n    return null;\n  })\n  console.log(res)\n  return res;\n}",
+              "compiledCode": "\"use strict\";\nfunction run(input) {\n    const res = input.onLeafs((leaf) => {\n        if (leaf.geometry instanceof replicad.Drawing) {\n            throw new Error(\"Drawings have no Faces. Input must be 3d\");\n        }\n        if (leaf.selection?.faces && leaf.selection.faces.length > 0) {\n            const faces = leaf.geometry.faces;\n            const faceIndexes = leaf.selection.faces;\n            if (faceIndexes.length == 1) {\n                leaf.geometry = faces[faceIndexes[0]];\n                return leaf;\n            }\n            else {\n                const res = faceIndexes.map((index) => {\n                    return new Assembly({ ...leaf, geometry: faces[index] });\n                });\n                return new Assembly({\n                    geometry: res\n                });\n            }\n        }\n        return null;\n    });\n    console.log(res);\n    return res;\n}\n"
+            }
+          ],
+          "allConnectors": [
+            {
+              "ap2Name": "input",
+              "ap1ID": "id-76136",
+              "ap2ID": "id-76137"
+            },
+            {
+              "ap2Name": "number or geometry",
+              "ap1ID": "id-76137",
+              "ap2ID": "id-76135"
+            }
+          ],
+          "parentRepo": {
+            "lastFoundGit": "2026-08-12T18:23:39.093Z",
+            "privateRepo": false,
+            "repoName": "ExtractFaces",
+            "dateCreated": "2026-07-24T19:57:30Z",
+            "likes": 0,
+            "readMe": "https://raw.githubusercontent.com/tristan-huber/ExtractFaces/master/README.md?sanitize=true",
+            "yyyy": 2026,
+            "topMoleculeID": "id-34810",
+            "githubMoleculesUsed": [],
+            "html_url": "https://github.com/tristan-huber/ExtractFaces",
+            "topics": [
+              "abundance-tool"
+            ],
+            "pullRequests": [],
+            "parentRepo": null,
+            "forks": 0,
+            "dateModified": "739821",
+            "ranking": 1.8,
+            "searchField": "extractfaces tristan-huber extract faces from an assembly by click selection. faces are identified by index within their leaf of the assembly. returns a new assembly with just faces abundance-tool",
+            "owner": "tristan-huber",
+            "description": "Extract faces from an assembly by click selection. Faces are identified by index within their leaf of the assembly. Returns a new assembly with just faces",
+            "contentURL": "https://raw.githubusercontent.com/tristan-huber/ExtractFaces/master/project.abundance?sanitize=true",
+            "svgURL": "https://raw.githubusercontent.com/tristan-huber/ExtractFaces/master/project.svg?sanitize=true",
+            "isLocal": false
+          },
+          "unitsKey": "Unitless",
+          "fileTypeVersion": 1,
+          "lastReloadedFromGithubAt": 1786566108397
+        },
+        {
+          "atomType": "Extrude",
+          "x": 0.306640625,
+          "y": 0.3657142857142857,
+          "uniqueID": "id-76147",
+          "ioValues": [
+            {
+              "name": "geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "height",
+              "ioValue": -0.25
+            }
+          ]
+        },
+        {
+          "atomType": "GitHubMolecule",
+          "x": 0.29817708333333337,
+          "y": 0.7228571428571429,
+          "uniqueID": "id-76156",
+          "name": "util.Offset",
+          "ioValues": [
+            {
+              "name": "Shape",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "Offset",
+              "ioValue": -0.25,
+              "currentEquation": "10"
+            }
+          ],
+          "topLevel": false,
+          "allAtoms": [
+            {
+              "atomType": "Output",
+              "x": 0.98,
+              "y": 0.5,
+              "uniqueID": "id-76152",
+              "ioValues": [
+                {
+                  "name": "number or geometry",
+                  "ioValue": "__GEOMETRY_INPUT__"
+                }
+              ]
+            },
+            {
+              "atomType": "Code",
+              "x": 0.36328124999999994,
+              "y": 0.5657142857142857,
+              "uniqueID": "id-76153",
+              "ioValues": [
+                {
+                  "name": "shape",
+                  "ioValue": "__GEOMETRY_INPUT__"
+                },
+                {
+                  "name": "offset",
+                  "ioValue": -0.25
+                }
+              ],
+              "interpreterVersion": 1,
+              "code": "function run(shape: Assembly, offset: number = 1) {\n  return shape.onLeafs((leaf) => {\n    console.log(leaf)\n    if (leaf.geometry instanceof replicad.Drawing) {\n      throw new Error(\"Drawings not supported for this type of offset\")\n    }\n\n    const oc = replicad.getOC();\n    const progress = new oc.Message_ProgressRange_1();\n    const offsetBuilder = new oc.BRepOffsetAPI_MakeOffsetShape();\n    offsetBuilder.PerformByJoin(\n      leaf.geometry.wrapped,\n      offset,\n      0.000001,\n      oc.BRepOffset_Mode.BRepOffset_Skin,\n      true, // for interior offsets this seems to work better when set to true.\n      false,\n      oc.GeomAbs_JoinType.GeomAbs_Arc,\n      false,\n      progress\n    );\n\n    //      offsetBuilder.PerformBySimple(leaf.geometry.wrapped, offset)\n    leaf.geometry = replicad.cast(replicad.downcast(offsetBuilder.Shape()))\n    if (leaf.geometry instanceof replicad.Shell) {\n      console.log(\"got shell, trying to make solid\")\n      leaf.geometry = replicad.makeSolid([leaf.geometry])\n    }\n\n    offsetBuilder.delete();\n    progress.delete();\n\n    return leaf;\n    //leaf.geometry = replicad.makeOffset(leaf.geometry, offset);\n  })\n}",
+              "compiledCode": "\"use strict\";\nfunction run(shape, offset = 1) {\n    return shape.onLeafs((leaf) => {\n        console.log(leaf);\n        if (leaf.geometry instanceof replicad.Drawing) {\n            throw new Error(\"Drawings not supported for this type of offset\");\n        }\n        const oc = replicad.getOC();\n        const progress = new oc.Message_ProgressRange_1();\n        const offsetBuilder = new oc.BRepOffsetAPI_MakeOffsetShape();\n        offsetBuilder.PerformByJoin(leaf.geometry.wrapped, offset, 0.000001, oc.BRepOffset_Mode.BRepOffset_Skin, true, // for interior offsets this seems to work better when set to true.\n        false, oc.GeomAbs_JoinType.GeomAbs_Arc, false, progress);\n        //      offsetBuilder.PerformBySimple(leaf.geometry.wrapped, offset)\n        leaf.geometry = replicad.cast(replicad.downcast(offsetBuilder.Shape()));\n        if (leaf.geometry instanceof replicad.Shell) {\n            console.log(\"got shell, trying to make solid\");\n            leaf.geometry = replicad.makeSolid([leaf.geometry]);\n        }\n        offsetBuilder.delete();\n        progress.delete();\n        return leaf;\n        //leaf.geometry = replicad.makeOffset(leaf.geometry, offset);\n    });\n}\n"
+            },
+            {
+              "atomType": "Input",
+              "x": 0.0231,
+              "y": 0.14,
+              "uniqueID": "id-76154",
+              "name": "Shape",
+              "type": "geometry"
+            },
+            {
+              "atomType": "Input",
+              "x": 0.0231,
+              "y": 0.22400000000000003,
+              "uniqueID": "id-76155",
+              "name": "Offset"
+            }
+          ],
+          "allConnectors": [
+            {
+              "ap2Name": "number or geometry",
+              "ap1ID": "id-76153",
+              "ap2ID": "id-76152"
+            },
+            {
+              "ap2Name": "shape",
+              "ap1ID": "id-76154",
+              "ap2ID": "id-76153"
+            },
+            {
+              "ap2Name": "offset",
+              "ap1ID": "id-76155",
+              "ap2ID": "id-76153"
+            }
+          ],
+          "parentRepo": {
+            "lastFoundGit": "2026-08-12T18:23:39.093Z",
+            "privateRepo": false,
+            "repoName": "util.Offset",
+            "dateCreated": "2026-07-17T21:53:37Z",
+            "likes": 0,
+            "readMe": "https://raw.githubusercontent.com/tristan-huber/util.Offset/master/README.md?sanitize=true",
+            "yyyy": 2026,
+            "topMoleculeID": "id-66747",
+            "githubMoleculesUsed": [],
+            "html_url": "https://github.com/tristan-huber/util.Offset",
+            "topics": [
+              "abundance-tool"
+            ],
+            "pullRequests": [],
+            "parentRepo": null,
+            "forks": 0,
+            "dateModified": "739834",
+            "ranking": 3,
+            "searchField": "util.offset tristan-huber offset an assembly of solids by some constant distance. positive value corresponds to a larger result, negative offsets correspond to a smaller result. abundance-tool",
+            "owner": "tristan-huber",
+            "description": "Offset an assembly of solids by some constant distance. Positive value corresponds to a larger result, negative offsets correspond to a smaller result.",
+            "contentURL": "https://raw.githubusercontent.com/tristan-huber/util.Offset/master/project.abundance?sanitize=true",
+            "svgURL": "https://raw.githubusercontent.com/tristan-huber/util.Offset/master/project.svg?sanitize=true",
+            "isLocal": false
+          },
+          "unitsKey": "Unitless",
+          "fileTypeVersion": 1,
+          "lastReloadedFromGithubAt": 1786566151710
         }
       ],
       "allConnectors": [
         {
+          "ap2Name": "Assembly",
+          "ap1ID": "id-76118",
+          "ap2ID": "id-76138"
+        },
+        {
+          "ap2Name": "Shape",
+          "ap1ID": "id-76118",
+          "ap2ID": "id-76156"
+        },
+        {
           "ap2Name": "number or geometry",
           "ap1ID": "id-76121",
           "ap2ID": "id-76116"
+        },
+        {
+          "ap2Name": "height",
+          "ap1ID": "id-76131",
+          "ap2ID": "id-76147"
+        },
+        {
+          "ap2Name": "Offset",
+          "ap1ID": "id-76131",
+          "ap2ID": "id-76156"
+        },
+        {
+          "ap2Name": "geometry",
+          "ap1ID": "id-76138",
+          "ap2ID": "id-76147"
         }
       ],
       "fileTypeVersion": 1
@@ -97,7 +356,7 @@
   ],
   "allConnectors": [
     {
-      "ap2Name": "faces",
+      "ap2Name": "hull",
       "ap1ID": "id-76112",
       "ap2ID": "id-76114"
     }
