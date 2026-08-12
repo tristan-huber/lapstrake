@@ -990,6 +990,29 @@
             }
           ],
           "closedSelection": 0
+        },
+        {
+          "atomType": "Code",
+          "x": 0.8756510416666666,
+          "y": 0.32285714285714284,
+          "uniqueID": "id-76348",
+          "ioValues": [
+            {
+              "name": "thickness",
+              "ioValue": 5
+            },
+            {
+              "name": "faces",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "fuse",
+              "ioValue": false
+            }
+          ],
+          "interpreterVersion": 1,
+          "code": "function run(faces: Assembly, thickness: number = 1, fuse: boolean = false) {\n  const resultingLeafs: Assembly[] = []\n  let fusedSolid: replicad.Solid;\n  faces.onLeafs((leaf) => {\n    let faces: replicad.Face[] = []\n    if (leaf.geometry instanceof replicad.Drawing) {\n      const sketches = leaf.geometry.sketchOnPlane(leaf.plane)\n      if (sketches instanceof replicad.Sketches) {\n        const t = sketches.faces()\n        faces = t instanceof replicad.Face ? [t] : t.faces\n      } else {\n        faces = [sketches.face()]\n      }\n    } else {\n      faces = leaf.geometry.faces\n    }\n    for (const face of faces) {\n      const offset = replicad.makeOffset(face, thickness);\n      const w1 = replicad.assembleWire(face.edges);\n      const w2 = replicad.assembleWire(offset.edges);\n      const boundary = replicad.loft([w2, w1], {}, true);\n      const solid = replicad.makeSolid([replicad.weldShellsAndFaces([face, offset, boundary])]).simplify();\n\n      if (fuse) {\n        if (fusedSolid == undefined) {\n          fusedSolid = solid\n        } else {\n          fusedSolid = fusedSolid.fuse(solid)\n        }\n      } else {\n        resultingLeafs.push(new Assembly({\n          ...leaf,\n          geometry: solid\n        }))\n      }\n    }\n    return leaf;\n  })\n  if (fuse) {\n    return new Assembly({\n      ...faces,\n      geometry: fusedSolid\n    })\n  } else {\n    return resultingLeafs;\n  }\n}",
+          "compiledCode": "\"use strict\";\nfunction run(faces, thickness = 1, fuse = false) {\n    const resultingLeafs = [];\n    let fusedSolid;\n    faces.onLeafs((leaf) => {\n        let faces = [];\n        if (leaf.geometry instanceof replicad.Drawing) {\n            const sketches = leaf.geometry.sketchOnPlane(leaf.plane);\n            if (sketches instanceof replicad.Sketches) {\n                const t = sketches.faces();\n                faces = t instanceof replicad.Face ? [t] : t.faces;\n            }\n            else {\n                faces = [sketches.face()];\n            }\n        }\n        else {\n            faces = leaf.geometry.faces;\n        }\n        for (const face of faces) {\n            const offset = replicad.makeOffset(face, thickness);\n            const w1 = replicad.assembleWire(face.edges);\n            const w2 = replicad.assembleWire(offset.edges);\n            const boundary = replicad.loft([w2, w1], {}, true);\n            const solid = replicad.makeSolid([replicad.weldShellsAndFaces([face, offset, boundary])]).simplify();\n            if (fuse) {\n                if (fusedSolid == undefined) {\n                    fusedSolid = solid;\n                }\n                else {\n                    fusedSolid = fusedSolid.fuse(solid);\n                }\n            }\n            else {\n                resultingLeafs.push(new Assembly({\n                    ...leaf,\n                    geometry: solid\n                }));\n            }\n        }\n        return leaf;\n    });\n    if (fuse) {\n        return new Assembly({\n            ...faces,\n            geometry: fusedSolid\n        });\n    }\n    else {\n        return resultingLeafs;\n    }\n}\n"
         }
       ],
       "allConnectors": [
