@@ -901,97 +901,6 @@
           "lastReloadedFromGithubAt": 1786567106187
         },
         {
-          "atomType": "Loft",
-          "x": 0.8606770833333333,
-          "y": 0.4942857142857142,
-          "uniqueID": "id-76343",
-          "ioValues": [
-            {
-              "name": "Shape 1",
-              "ioValue": "__GEOMETRY_INPUT__"
-            },
-            {
-              "name": "Shape 2",
-              "ioValue": "__GEOMETRY_INPUT__"
-            },
-            {
-              "name": "Shape 3",
-              "ioValue": "__GEOMETRY_INPUT__"
-            },
-            {
-              "name": "Shape 1",
-              "ioValue": {
-                "geometry": "ccbee0ee-0",
-                "color": "#aad7f2",
-                "tags": [],
-                "bom": [],
-                "plane": {
-                  "origin": [
-                    0,
-                    0,
-                    0
-                  ],
-                  "xDir": [
-                    1,
-                    0,
-                    0
-                  ],
-                  "normal": [
-                    0,
-                    0,
-                    1
-                  ]
-                },
-                "metadata": {},
-                "selection": {
-                  "faces": [
-                    9
-                  ]
-                },
-                "dimension": "Face"
-              }
-            },
-            {
-              "name": "Shape 2",
-              "ioValue": {
-                "geometry": "f560bc28-0",
-                "color": "#aad7f2",
-                "tags": [],
-                "bom": [],
-                "plane": {
-                  "origin": [
-                    0,
-                    0,
-                    0
-                  ],
-                  "xDir": [
-                    1,
-                    0,
-                    0
-                  ],
-                  "normal": [
-                    0,
-                    0,
-                    1
-                  ]
-                },
-                "metadata": {},
-                "selection": {
-                  "faces": [
-                    8
-                  ]
-                },
-                "dimension": "Face"
-              }
-            },
-            {
-              "name": "Shape 3",
-              "ioValue": null
-            }
-          ],
-          "closedSelection": 0
-        },
-        {
           "atomType": "Code",
           "x": 0.7643229166666667,
           "y": 0.2885714285714286,
@@ -1354,11 +1263,6 @@
         {
           "ap2Name": "Shape 1",
           "ap1ID": "id-76138",
-          "ap2ID": "id-76343"
-        },
-        {
-          "ap2Name": "Shape 1",
-          "ap1ID": "id-76138",
           "ap2ID": "id-76360"
         },
         {
@@ -1385,11 +1289,6 @@
           "ap2Name": "Geometry",
           "ap1ID": "id-76281",
           "ap2ID": "id-76309"
-        },
-        {
-          "ap2Name": "Shape 2",
-          "ap1ID": "id-76285",
-          "ap2ID": "id-76343"
         },
         {
           "ap2Name": "Shape 2",
