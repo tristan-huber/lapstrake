@@ -43,8 +43,7 @@
         },
         {
           "name": "thickness",
-          "ioValue": -0.25,
-          "currentEquation": "-0.25"
+          "ioValue": -0.25
         }
       ],
       "topLevel": false,
@@ -63,8 +62,8 @@
         },
         {
           "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.3342857142857143,
+          "x": 0.025384615384615384,
+          "y": 0.15384615384615385,
           "uniqueID": "id-76118",
           "name": "hull",
           "type": "faceselect",
@@ -76,15 +75,126 @@
         },
         {
           "atomType": "Input",
-          "x": 0.0231,
-          "y": 0.6342857142857142,
+          "x": 0.025384615384615384,
+          "y": 0.24615384615384617,
           "uniqueID": "id-76131",
           "name": "thickness"
         },
         {
+          "atomType": "Extrude",
+          "x": 0.41796875000000006,
+          "y": 0.4828571428571429,
+          "uniqueID": "id-76147",
+          "ioValues": [
+            {
+              "name": "geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "height",
+              "ioValue": -0.25
+            }
+          ]
+        },
+        {
+          "atomType": "Extrude",
+          "x": 0.388671875,
+          "y": 0.7942857142857144,
+          "uniqueID": "id-76265",
+          "ioValues": [
+            {
+              "name": "geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "height",
+              "ioValue": -0.25
+            }
+          ]
+        },
+        {
+          "atomType": "Difference",
+          "x": 0.5364583333333334,
+          "y": 0.48857142857142855,
+          "uniqueID": "id-76281",
+          "ioValues": [
+            {
+              "name": "retain",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "remove",
+              "ioValue": "__GEOMETRY_INPUT__"
+            }
+          ]
+        },
+        {
+          "atomType": "Code",
+          "x": 0.7643229166666667,
+          "y": 0.2885714285714286,
+          "uniqueID": "id-76348",
+          "ioValues": [
+            {
+              "name": "assembly",
+              "ioValue": "__GEOMETRY_INPUT__"
+            }
+          ],
+          "interpreterVersion": 1,
+          "code": "\n\n\nfunction run(assembly: Assembly) {\n  let faces: replicad.Face[] = []\n  assembly.onLeafs((leaf) => {\n    if (leaf.geometry instanceof replicad.Drawing) {\n      const sketches = leaf.geometry.sketchOnPlane(leaf.plane)\n      if (sketches instanceof replicad.Sketches) {\n        const t = sketches.faces()\n        faces = t instanceof replicad.Face ? [t] : t.faces\n      } else {\n        faces = [sketches.face()]\n      }\n    } else if (assembly.geometry instanceof replicad.Face) {\n      faces.push(assembly.geometry)\n    } else {\n      faces.push(...leaf.geometry.faces)\n    }\n    return leaf;\n  })\n\n  if (faces.length != 2) {\n    throw new Error(\"this function only supported for exactly two faces for now.\")\n  }\n\n  const w1 = replicad.assembleWire(faces[0].edges)\n  const w2 = replicad.assembleWire(faces[1].edges);\n  const boundary = replicad.loft([w2, w1], {}, true);\n  const solid = replicad.makeSolid([replicad.weldShellsAndFaces([...faces, boundary])]).simplify();\n\n  return solid;\n}",
+          "compiledCode": "\"use strict\";\nfunction run(assembly) {\n    let faces = [];\n    assembly.onLeafs((leaf) => {\n        if (leaf.geometry instanceof replicad.Drawing) {\n            const sketches = leaf.geometry.sketchOnPlane(leaf.plane);\n            if (sketches instanceof replicad.Sketches) {\n                const t = sketches.faces();\n                faces = t instanceof replicad.Face ? [t] : t.faces;\n            }\n            else {\n                faces = [sketches.face()];\n            }\n        }\n        else if (assembly.geometry instanceof replicad.Face) {\n            faces.push(assembly.geometry);\n        }\n        else {\n            faces.push(...leaf.geometry.faces);\n        }\n        return leaf;\n    });\n    if (faces.length != 2) {\n        throw new Error(\"this function only supported for exactly two faces for now.\");\n    }\n    const w1 = replicad.assembleWire(faces[0].edges);\n    const w2 = replicad.assembleWire(faces[1].edges);\n    const boundary = replicad.loft([w2, w1], {}, true);\n    const solid = replicad.makeSolid([replicad.weldShellsAndFaces([...faces, boundary])]).simplify();\n    return solid;\n}\n"
+        },
+        {
+          "atomType": "Assembly",
+          "x": 0.6627604166666666,
+          "y": 0.2742857142857143,
+          "uniqueID": "id-76360",
+          "ioValues": [
+            {
+              "name": "Shape 1",
+              "ioValue": null
+            },
+            {
+              "name": "Shape 2",
+              "ioValue": null
+            }
+          ]
+        },
+        {
+          "atomType": "Difference",
+          "x": 0.8131510416666667,
+          "y": 0.7828571428571428,
+          "uniqueID": "id-76365",
+          "ioValues": [
+            {
+              "name": "retain",
+              "ioValue": "__GEOMETRY_INPUT__"
+            },
+            {
+              "name": "remove",
+              "ioValue": "__GEOMETRY_INPUT__"
+            }
+          ]
+        },
+        {
+          "atomType": "Assembly",
+          "x": 0.9205729166666666,
+          "y": 0.2942857142857143,
+          "uniqueID": "id-76414",
+          "ioValues": [
+            {
+              "name": "Shape 1",
+              "ioValue": null
+            },
+            {
+              "name": "Shape 2",
+              "ioValue": null
+            }
+          ]
+        },
+        {
           "atomType": "GitHubMolecule",
           "x": 0.20703125,
-          "y": 0.2857142857142857,
+          "y": 0.21142857142857144,
           "uniqueID": "id-76138",
           "name": "ExtractFaces",
           "ioValues": [
@@ -109,8 +219,8 @@
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.14,
+              "x": 0.025384615384615384,
+              "y": 0.15384615384615385,
               "uniqueID": "id-76136",
               "name": "Assembly",
               "type": "faceselect",
@@ -179,25 +289,9 @@
           "lastReloadedFromGithubAt": 1786566108397
         },
         {
-          "atomType": "Extrude",
-          "x": 0.41796875000000006,
-          "y": 0.4828571428571429,
-          "uniqueID": "id-76147",
-          "ioValues": [
-            {
-              "name": "geometry",
-              "ioValue": "__GEOMETRY_INPUT__"
-            },
-            {
-              "name": "height",
-              "ioValue": -0.25
-            }
-          ]
-        },
-        {
           "atomType": "GitHubMolecule",
-          "x": 0.29817708333333337,
-          "y": 0.7228571428571429,
+          "x": 0.18359375,
+          "y": 0.8285714285714286,
           "uniqueID": "id-76216",
           "name": "util.Offset",
           "ioValues": [
@@ -245,16 +339,16 @@
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.14,
+              "x": 0.025384615384615384,
+              "y": 0.15384615384615385,
               "uniqueID": "id-76214",
               "name": "Shape",
               "type": "geometry"
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.22400000000000003,
+              "x": 0.025384615384615384,
+              "y": 0.24615384615384617,
               "uniqueID": "id-76215",
               "name": "Offset"
             }
@@ -308,8 +402,8 @@
         },
         {
           "atomType": "GitHubMolecule",
-          "x": 0.4322916666666667,
-          "y": 0.26285714285714284,
+          "x": 0.4283854166666667,
+          "y": 0.15428571428571428,
           "uniqueID": "id-76249",
           "name": "util.Offset",
           "ioValues": [
@@ -358,16 +452,16 @@
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.14,
+              "x": 0.025384615384615384,
+              "y": 0.15384615384615385,
               "uniqueID": "id-76247",
               "name": "Shape",
               "type": "geometry"
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.22400000000000003,
+              "x": 0.025384615384615384,
+              "y": 0.24615384615384617,
               "uniqueID": "id-76248",
               "name": "Offset"
             }
@@ -420,25 +514,9 @@
           "lastReloadedFromGithubAt": 1786566890173
         },
         {
-          "atomType": "Extrude",
-          "x": 0.40234375000000006,
-          "y": 0.8057142857142858,
-          "uniqueID": "id-76265",
-          "ioValues": [
-            {
-              "name": "geometry",
-              "ioValue": "__GEOMETRY_INPUT__"
-            },
-            {
-              "name": "height",
-              "ioValue": -0.25
-            }
-          ]
-        },
-        {
           "atomType": "GitHubMolecule",
-          "x": 0.22200520833333331,
-          "y": 0.5228571428571429,
+          "x": 0.20507812499999997,
+          "y": 0.5971428571428571,
           "uniqueID": "id-76269",
           "name": "ExtractFaces",
           "ioValues": [
@@ -463,8 +541,8 @@
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.14,
+              "x": 0.025384615384615384,
+              "y": 0.15384615384615385,
               "uniqueID": "id-76271",
               "name": "Assembly",
               "type": "faceselect",
@@ -533,25 +611,9 @@
           "lastReloadedFromGithubAt": 1786566108397
         },
         {
-          "atomType": "Difference",
-          "x": 0.5716145833333334,
-          "y": 0.5428571428571428,
-          "uniqueID": "id-76281",
-          "ioValues": [
-            {
-              "name": "retain",
-              "ioValue": "__GEOMETRY_INPUT__"
-            },
-            {
-              "name": "remove",
-              "ioValue": "__GEOMETRY_INPUT__"
-            }
-          ]
-        },
-        {
           "atomType": "GitHubMolecule",
-          "x": 0.6809895833333333,
-          "y": 0.8571428571428571,
+          "x": 0.6751302083333333,
+          "y": 0.5314285714285714,
           "uniqueID": "id-76285",
           "name": "ExtractFaces",
           "ioValues": [
@@ -576,8 +638,8 @@
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.14,
+              "x": 0.025384615384615384,
+              "y": 0.15384615384615385,
               "uniqueID": "id-76287",
               "name": "Assembly",
               "type": "faceselect",
@@ -685,40 +747,40 @@
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.14,
+              "x": 0.025384615384615384,
+              "y": 0.15384615384615385,
               "uniqueID": "id-76299",
               "name": "Geometry",
               "type": "number"
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.22400000000000003,
+              "x": 0.025384615384615384,
+              "y": 0.24615384615384617,
               "uniqueID": "id-76300",
               "name": "Offset",
               "type": "number"
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.30800000000000005,
+              "x": 0.025384615384615384,
+              "y": 0.3384615384615385,
               "uniqueID": "id-76301",
               "name": "Angle X",
               "type": "number"
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.39200000000000007,
+              "x": 0.025384615384615384,
+              "y": 0.4307692307692308,
               "uniqueID": "id-76302",
               "name": "Angle Z",
               "type": "number"
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.4760000000000001,
+              "x": 0.025384615384615384,
+              "y": 0.5230769230769231,
               "uniqueID": "id-76303",
               "name": "Angle Y",
               "type": "number"
@@ -901,53 +963,6 @@
           "lastReloadedFromGithubAt": 1786567106187
         },
         {
-          "atomType": "Code",
-          "x": 0.7643229166666667,
-          "y": 0.2885714285714286,
-          "uniqueID": "id-76348",
-          "ioValues": [
-            {
-              "name": "assembly",
-              "ioValue": "__GEOMETRY_INPUT__"
-            }
-          ],
-          "interpreterVersion": 1,
-          "code": "\n\n\nfunction run(assembly: Assembly) {\n  let faces: replicad.Face[] = []\n  assembly.onLeafs((leaf) => {\n    if (leaf.geometry instanceof replicad.Drawing) {\n      const sketches = leaf.geometry.sketchOnPlane(leaf.plane)\n      if (sketches instanceof replicad.Sketches) {\n        const t = sketches.faces()\n        faces = t instanceof replicad.Face ? [t] : t.faces\n      } else {\n        faces = [sketches.face()]\n      }\n    } else if (assembly.geometry instanceof replicad.Face) {\n      faces.push(assembly.geometry)\n    } else {\n      faces.push(...leaf.geometry.faces)\n    }\n    return leaf;\n  })\n\n  if (faces.length != 2) {\n    throw new Error(\"this function only supported for exactly two faces for now.\")\n  }\n\n  const w1 = replicad.assembleWire(faces[0].edges)\n  const w2 = replicad.assembleWire(faces[1].edges);\n  const boundary = replicad.loft([w2, w1], {}, true);\n  const solid = replicad.makeSolid([replicad.weldShellsAndFaces([...faces, boundary])]).simplify();\n\n  return solid;\n}",
-          "compiledCode": "\"use strict\";\nfunction run(assembly) {\n    let faces = [];\n    assembly.onLeafs((leaf) => {\n        if (leaf.geometry instanceof replicad.Drawing) {\n            const sketches = leaf.geometry.sketchOnPlane(leaf.plane);\n            if (sketches instanceof replicad.Sketches) {\n                const t = sketches.faces();\n                faces = t instanceof replicad.Face ? [t] : t.faces;\n            }\n            else {\n                faces = [sketches.face()];\n            }\n        }\n        else if (assembly.geometry instanceof replicad.Face) {\n            faces.push(assembly.geometry);\n        }\n        else {\n            faces.push(...leaf.geometry.faces);\n        }\n        return leaf;\n    });\n    if (faces.length != 2) {\n        throw new Error(\"this function only supported for exactly two faces for now.\");\n    }\n    const w1 = replicad.assembleWire(faces[0].edges);\n    const w2 = replicad.assembleWire(faces[1].edges);\n    const boundary = replicad.loft([w2, w1], {}, true);\n    const solid = replicad.makeSolid([replicad.weldShellsAndFaces([...faces, boundary])]).simplify();\n    return solid;\n}\n"
-        },
-        {
-          "atomType": "Assembly",
-          "x": 0.6627604166666666,
-          "y": 0.2742857142857143,
-          "uniqueID": "id-76360",
-          "ioValues": [
-            {
-              "name": "Shape 1",
-              "ioValue": null
-            },
-            {
-              "name": "Shape 2",
-              "ioValue": null
-            }
-          ]
-        },
-        {
-          "atomType": "Difference",
-          "x": 0.8131510416666667,
-          "y": 0.7828571428571428,
-          "uniqueID": "id-76365",
-          "ioValues": [
-            {
-              "name": "retain",
-              "ioValue": "__GEOMETRY_INPUT__"
-            },
-            {
-              "name": "remove",
-              "ioValue": "__GEOMETRY_INPUT__"
-            }
-          ]
-        },
-        {
           "atomType": "GitHubMolecule",
           "x": 0.5774739583333334,
           "y": 0.8257142857142857,
@@ -987,40 +1002,40 @@
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.14,
+              "x": 0.025384615384615384,
+              "y": 0.15384615384615385,
               "uniqueID": "id-76371",
               "name": "Geometry",
               "type": "number"
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.22400000000000003,
+              "x": 0.025384615384615384,
+              "y": 0.24615384615384617,
               "uniqueID": "id-76372",
               "name": "Offset",
               "type": "number"
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.30800000000000005,
+              "x": 0.025384615384615384,
+              "y": 0.3384615384615385,
               "uniqueID": "id-76373",
               "name": "Angle X",
               "type": "number"
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.39200000000000007,
+              "x": 0.025384615384615384,
+              "y": 0.4307692307692308,
               "uniqueID": "id-76374",
               "name": "Angle Z",
               "type": "number"
             },
             {
               "atomType": "Input",
-              "x": 0.0231,
-              "y": 0.4760000000000001,
+              "x": 0.025384615384615384,
+              "y": 0.5230769230769231,
               "uniqueID": "id-76375",
               "name": "Angle Y",
               "type": "number"
@@ -1201,22 +1216,6 @@
           "unitsKey": "MM",
           "fileTypeVersion": 1,
           "lastReloadedFromGithubAt": 1786567106187
-        },
-        {
-          "atomType": "Assembly",
-          "x": 0.9205729166666666,
-          "y": 0.2942857142857143,
-          "uniqueID": "id-76414",
-          "ioValues": [
-            {
-              "name": "Shape 1",
-              "ioValue": null
-            },
-            {
-              "name": "Shape 2",
-              "ioValue": null
-            }
-          ]
         }
       ],
       "allConnectors": [
@@ -1251,21 +1250,6 @@
           "ap2ID": "id-76265"
         },
         {
-          "ap2Name": "geometry",
-          "ap1ID": "id-76138",
-          "ap2ID": "id-76147"
-        },
-        {
-          "ap2Name": "Shape",
-          "ap1ID": "id-76138",
-          "ap2ID": "id-76249"
-        },
-        {
-          "ap2Name": "Shape 1",
-          "ap1ID": "id-76138",
-          "ap2ID": "id-76360"
-        },
-        {
           "ap2Name": "retain",
           "ap1ID": "id-76147",
           "ap2ID": "id-76281"
@@ -1281,24 +1265,9 @@
           "ap2ID": "id-76369"
         },
         {
-          "ap2Name": "geometry",
-          "ap1ID": "id-76269",
-          "ap2ID": "id-76265"
-        },
-        {
           "ap2Name": "Geometry",
           "ap1ID": "id-76281",
           "ap2ID": "id-76309"
-        },
-        {
-          "ap2Name": "Shape 2",
-          "ap1ID": "id-76285",
-          "ap2ID": "id-76360"
-        },
-        {
-          "ap2Name": "Assembly",
-          "ap1ID": "id-76309",
-          "ap2ID": "id-76285"
         },
         {
           "ap2Name": "remove",
@@ -1319,6 +1288,36 @@
           "ap2Name": "Shape 1",
           "ap1ID": "id-76365",
           "ap2ID": "id-76414"
+        },
+        {
+          "ap2Name": "geometry",
+          "ap1ID": "id-76138",
+          "ap2ID": "id-76147"
+        },
+        {
+          "ap2Name": "Shape",
+          "ap1ID": "id-76138",
+          "ap2ID": "id-76249"
+        },
+        {
+          "ap2Name": "Shape 1",
+          "ap1ID": "id-76138",
+          "ap2ID": "id-76360"
+        },
+        {
+          "ap2Name": "geometry",
+          "ap1ID": "id-76269",
+          "ap2ID": "id-76265"
+        },
+        {
+          "ap2Name": "Shape 2",
+          "ap1ID": "id-76285",
+          "ap2ID": "id-76360"
+        },
+        {
+          "ap2Name": "Assembly",
+          "ap1ID": "id-76309",
+          "ap2ID": "id-76285"
         },
         {
           "ap2Name": "retain",
